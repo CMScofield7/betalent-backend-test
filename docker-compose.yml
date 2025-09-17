@@ -1,0 +1,29 @@
+services:
+  db:
+    image: mysql:8
+    container_name: betalent-gateway-api
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: betalent-gateway-api
+      TZ: America/Sao_Paulo
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -proot || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - db_data:/var/lib/mysql
+
+  gateways-mock:
+    image: matheusprotzen/gateways-mock:latest
+    container_name: betalent_gateways
+    environment:
+      REMOVE_AUTH: "false"
+    ports:
+      - "3001:3001"          # G1 (login + bearer)
+      - "3002:3002"          # G2 (headers fixos)
+
+volumes:
+  db_data:
