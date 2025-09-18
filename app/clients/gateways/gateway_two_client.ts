@@ -1,9 +1,10 @@
-import GatewayTwoChargePayload from '#types/gateway_two_charge_payload.type'
-import GatewayTwoChargeResponse from '#types/gateway_two_charge_response.type'
-import GatewayTwoRefundPayload from '#types/gateway_two_refund_payload.type'
-import GatewayTwoRefundResponse from '#types/gateway_two_refund_response.type'
+import GatewayTwoChargePayload from '#interfaces/gateway_two_charge_payload.interface'
+import GatewayTwoChargeResponse from '#interfaces/gateway_two_charge_response.interface'
+import GatewayTwoRefundPayload from '#interfaces/gateway_two_refund_payload.interface'
+import GatewayTwoRefundResponse from '#interfaces/gateway_two_refund_response.interface'
 import PaymentGatewayClient from '#interfaces/payment_gateway_client.interface'
 import type { ChargeResult } from '#types/charge_result.type'
+import { ChargeInput } from '#types/charge_input.type'
 
 export default class GatewayTwoClient implements PaymentGatewayClient {
   private readonly baseUrl = process.env.GATEWAY_TWO_URL ?? 'http://localhost:3002'
@@ -24,13 +25,7 @@ export default class GatewayTwoClient implements PaymentGatewayClient {
     }
   }
 
-  async charge(input: {
-    amount: number
-    name: string
-    email: string
-    cardNumber: string
-    cvv: string
-  }): Promise<ChargeResult> {
+  async charge(input: ChargeInput): Promise<ChargeResult> {
     const payload: GatewayTwoChargePayload = {
       valor: input.amount,
       nome: input.name,

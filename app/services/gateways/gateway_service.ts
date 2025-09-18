@@ -1,4 +1,5 @@
 import Gateway from '#models/gateway'
+import Transaction from '#models/transaction'
 import { ChargeInput } from '#types/charge_input.type'
 import { ClientMap } from '#types/client_map.type'
 import type { ChargeOutput } from '#types/charge_output.types'
@@ -45,13 +46,7 @@ export default class GatewayService implements ChargeGatewayDriver {
     }
   }
 
-  async charge(input: {
-    amount: number
-    name: string
-    email: string
-    cardNumber: string
-    cvv: string
-  }): Promise<ChargeOutput> {
+  async charge(input: ChargeInput): Promise<ChargeOutput> {
     const { result, gatewayName } = await this.chargeWithFailover(input)
 
     if (result.ok && result.status === 'approved') {
@@ -67,5 +62,20 @@ export default class GatewayService implements ChargeGatewayDriver {
       externalId: result.externalId,
       gatewayName,
     }
+  }
+
+  async refund(transaction: Transaction): Promise<void> {
+    if (!transaction.externalId) {
+      throw new Error('Transaction does not have an external id for refund!')
+    }
+
+    const gateway = await Gateway.findOrFail(transaction.gatewayId)
+    const client = this.clients[gateway.name]
+
+    if (!client || typeof client.refund !== 'function') {
+      throw new Error(`Gateway ${gateway.name} does not support refunds!`)
+    }
+
+    await client.refund(transaction.externalId)
   }
 }

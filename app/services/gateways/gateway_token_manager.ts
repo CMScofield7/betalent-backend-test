@@ -1,4 +1,5 @@
 import { decodeJwt } from 'jose'
+import GatewayOneLoginResponse from '#interfaces/gateway_one_login_response.interface'
 
 export default class GatewayTokenManager {
   private token: string | null = null
@@ -26,7 +27,7 @@ export default class GatewayTokenManager {
       throw new Error('GatewayTokenManager: login failed')
     }
 
-    const { token } = (await response.json()) as { token: string }
+    const { token } = (await response.json()) as GatewayOneLoginResponse
     this.token = token
     this.tokenExpiresAt = GatewayTokenManager.extractExpiration(token)
 

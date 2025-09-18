@@ -1,5 +1,5 @@
 export default interface GatewayOneChargeResponse {
   status: 'approved' | 'declined' | 'error'
-  transaction_id?: string
+  id?: string
   message?: string
 }

@@ -31,6 +31,10 @@ router
   })
   .use([middleware.auth()])
 
+router
+  .post('/transactions/:id/refund', '#controllers/transactions_controller.refund')
+  .use([middleware.auth(), middleware.role([UserRole.ADMIN, UserRole.FINANCE])])
+
 router.get('/users/me', '#controllers/user_controllers.me').use([middleware.auth()])
 router
   .group(() => {
