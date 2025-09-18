@@ -267,4 +267,3 @@ O fato d'eu não conhecer o framework me fez ter de pesquisar bastante pra aplic
 
 ---
 
-Feito com ❤️ seguindo os requisitos do desafio BeTalent.
