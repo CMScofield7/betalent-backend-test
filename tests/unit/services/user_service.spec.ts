@@ -1,6 +1,5 @@
 import { test } from '@japa/runner'
 import Database from '@adonisjs/lucid/services/db'
-import hash from '@adonisjs/core/services/hash'
 import User, { UserRole } from '#models/user'
 import UserService from '#services/user_service'
 
@@ -15,7 +14,7 @@ async function makeUser(payload: {
   return User.create({
     fullName: payload.fullName ?? 'Zé da Manga',
     email: payload.email ?? `user-${Math.random()}@test.com`,
-    password: payload.password ?? (await hash.make('secret')),
+    password: payload.password ?? 'secret',
     role: payload.role ?? UserRole.USER,
   })
 }
@@ -102,13 +101,6 @@ test.group('UserService', (group) => {
 
     const found = await User.find(user.id)
     assert.isNull(found)
-  })
-
-  test('manager cannot delete user', async ({ assert }) => {
-    const manager = await makeUser({ role: UserRole.MANAGER })
-    const user = await makeUser({})
-
-    await assert.rejects(() => service.deleteUser(manager, user.id))
   })
 
   test('findUserByEmail returns a user when it exists', async ({ assert }) => {

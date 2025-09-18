@@ -1,4 +1,3 @@
-import hash from '@adonisjs/core/services/hash'
 import User, { UserRole } from '#models/user'
 import UserServiceInterface, {
   CreateUserInput,
@@ -17,7 +16,7 @@ export default class UserService implements UserServiceInterface {
     const user = await User.create({
       fullName: payload.fullName ?? null,
       email: payload.email,
-      password: await hash.make(payload.password),
+      password: payload.password,
       role: payload.role,
     })
 
@@ -35,17 +34,16 @@ export default class UserService implements UserServiceInterface {
   }
 
   async updateUser(currentUser: User, userId: number, payload: UpdateUserInput): Promise<User> {
-    this.whoCanManageUsers(currentUser)
-
     const user = await User.findOrFail(userId)
     this.managerCannotManagePeers(currentUser, user)
+    this.whoCanManageUsers(currentUser)
 
     if (payload.fullName !== undefined) {
       user.fullName = payload.fullName
     }
 
     if (payload.password) {
-      user.password = await hash.make(payload.password)
+      user.password = payload.password
     }
 
     if (payload.role) {
@@ -57,10 +55,9 @@ export default class UserService implements UserServiceInterface {
   }
 
   async deleteUser(currentUser: User, userId: number): Promise<void> {
-    this.whoCanDeleteUsers(currentUser)
-
     const user = await User.findOrFail(userId)
     this.managerCannotManagePeers(currentUser, user)
+    this.whoCanDeleteUsers(currentUser)
     await user.delete()
   }
 
@@ -71,7 +68,7 @@ export default class UserService implements UserServiceInterface {
   }
 
   private whoCanDeleteUsers(currentUser: User) {
-    if (currentUser.role !== UserRole.ADMIN) {
+    if (![UserRole.ADMIN, UserRole.MANAGER].includes(currentUser.role)) {
       throw new Error('Only admins can delete users!')
     }
   }

@@ -1,6 +1,8 @@
-import UserService from '#services/user_service'
+import { inject } from '@adonisjs/core/container'
 import { HttpContext } from '@adonisjs/core/http'
+import UserService from '#services/user_service'
 
+@inject()
 export default class UsersController {
   constructor(private userService: UserService) {}
 
@@ -15,6 +17,10 @@ export default class UsersController {
     const currentUser = auth.user!
     const users = await this.userService.findAllUsers(currentUser)
     return users
+  }
+
+  async me({ auth }: HttpContext) {
+    return auth.user!
   }
 
   async indexOne({ auth, params }: HttpContext) {
