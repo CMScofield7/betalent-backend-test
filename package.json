@@ -9,6 +9,9 @@
     "build": "node ace build",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
+    "db:reset": "node ace db:wipe && node ace migration:run && node ace db:seed --files database/seeders/gateway_seeder.ts && node ace db:seed --files database/seeders/user_seeder.ts",
+    "test:unit": "node ace test --suite=unit",
+    "test:e2e": "node ace test --suite=e2e",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
