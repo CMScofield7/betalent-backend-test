@@ -8,7 +8,7 @@ export default class TransactionService {
   constructor(private gatewayService: RefundGateway) {}
 
   async refundTransaction(currentUser: User, transactionId: number): Promise<Transaction> {
-    this.ensureCanRefund(currentUser)
+    this.whoCanRefund(currentUser)
 
     const transaction = await Transaction.findOrFail(transactionId)
 
@@ -28,7 +28,7 @@ export default class TransactionService {
     return transaction
   }
 
-  private ensureCanRefund(currentUser: User) {
+  private whoCanRefund(currentUser: User) {
     if (![UserRole.ADMIN, UserRole.FINANCE].includes(currentUser.role)) {
       throw new Error('You are not allowed to refund transactions!')
     }

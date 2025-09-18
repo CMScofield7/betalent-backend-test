@@ -41,19 +41,27 @@ export default class GatewayTwoClient implements PaymentGatewayClient {
     })
 
     if (!response.ok) {
+      const message = await response.text()
+      console.error('GatewayTwoClient charge error:', message)
       return { ok: false, status: 'error' }
     }
 
-    const data = (await response.json()) as GatewayTwoChargeResponse
+    try {
+      const data = (await response.json()) as GatewayTwoChargeResponse
 
-    if (data.status !== 'approved') {
-      return { ok: false, status: 'error', externalId: data.id }
-    }
+      if (!data.id) {
+        console.warn('GatewayTwoClient charge declined:', data)
+        return { ok: false, status: 'error', externalId: data.id }
+      }
 
-    return {
-      ok: true,
-      status: 'approved',
-      externalId: data.id,
+      return {
+        ok: true,
+        status: 'approved',
+        externalId: data.id,
+      }
+    } catch (error) {
+      console.error('GatewayTwoClient invalid charge payload', error)
+      return { ok: false, status: 'error' }
     }
   }
 
@@ -69,6 +77,8 @@ export default class GatewayTwoClient implements PaymentGatewayClient {
     })
 
     if (!response.ok) {
+      const message = await response.text()
+      console.error('GatewayTwoClient refund error:', message)
       throw new Error('GatewayTwoClient: refund failed')
     }
 

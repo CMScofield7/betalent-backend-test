@@ -1,5 +1,4 @@
 import PaymentGatewayClient from '#interfaces/payment_gateway_client.interface'
-import GatewayOneChargePayload from '#interfaces/gateway_one_charge_payload.interface'
 import GatewayOneChargeResponse from '#interfaces/gateway_one_charge_response.interface'
 import GatewayOneRefundResponse from '#interfaces/gateway_one_refund_response.interface'
 import type { ChargeResult } from '#types/charge_result.type'
@@ -27,45 +26,30 @@ export default class GatewayOneClient implements PaymentGatewayClient {
   async charge(input: ChargeInput): Promise<ChargeResult> {
     const token = await this.tokenManager.getToken()
 
-    const payload: GatewayOneChargePayload = {
-      amount: input.amount,
-      name: input.name,
-      email: input.email,
-      cardNumber: input.cardNumber,
-      cvv: input.cvv,
-    }
-
     const response = await fetch(`${this.baseUrl}/transactions`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(input satisfies ChargeInput),
     })
 
     const data = await response.text()
-
     if (!response.ok) {
       console.error('GatewayOneClient charge error:', data)
       return { ok: false, status: 'error' }
     }
 
-    let parsed: GatewayOneChargeResponse
     try {
-      parsed = JSON.parse(data) as GatewayOneChargeResponse
-    } catch (error) {
+      const parsed = JSON.parse(data) as GatewayOneChargeResponse
+      return {
+        ok: true,
+        status: 'approved',
+        externalId: parsed.id,
+      }
+    } catch {
       return { ok: false, status: 'error' }
-    }
-
-    if (!parsed.id) {
-      return { ok: false, status: 'error' }
-    }
-
-    return {
-      ok: true,
-      status: 'approved',
-      externalId: parsed.id,
     }
   }
 
