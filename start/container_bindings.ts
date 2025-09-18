@@ -1,5 +1,5 @@
 import app from '@adonisjs/core/services/app'
-import GatewayService from '#services/gateway_service'
+import GatewayService from '#services/gateways/gateway_service'
 import GatewayOneClient from '#clients/gateways/gateway_one_client'
 import GatewayTwoClient from '#clients/gateways/gateway_two_client'
 import type { ClientMap } from '#types/client_map.type'

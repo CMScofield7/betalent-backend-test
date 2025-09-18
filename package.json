@@ -19,6 +19,7 @@
     "#models/*": "./app/models/*.js",
     "#mails/*": "./app/mails/*.js",
     "#services/*": "./app/services/*.js",
+    "#services/gateways/*": "./app/services/gateways/*.js",
     "#clients/*": "./app/clients/*.js",
     "#listeners/*": "./app/listeners/*.js",
     "#events/*": "./app/events/*.js",
@@ -59,6 +60,7 @@
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^21.6.1",
     "@vinejs/vine": "^3.0.1",
+    "jose": "^6.1.0",
     "luxon": "^3.7.2",
     "mysql2": "^3.15.0",
     "reflect-metadata": "^0.2.2"

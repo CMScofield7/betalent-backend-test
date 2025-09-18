@@ -7,11 +7,15 @@ import type { ChargeResult } from '#types/charge_result.type'
 
 export default class GatewayTwoClient implements PaymentGatewayClient {
   private readonly baseUrl = process.env.GATEWAY_TWO_URL ?? 'http://localhost:3002'
-  private readonly token = process.env.GATEWAY_TWO_TOKEN ?? 'tk_f2198cc671b5289fa856'
-  private readonly secret = process.env.GATEWAY_TWO_SECRET ?? '3d15e8ed6131446ea7e3456728b1211f'
+  private readonly token = process.env.GATEWAY_TWO_TOKEN ?? ''
+  private readonly secret = process.env.GATEWAY_TWO_SECRET ?? ''
   readonly name = 'Gateway 2'
 
   private withAuth(headers: Record<string, string> = {}) {
+    if (!this.token || !this.secret) {
+      throw new Error('GatewayTwoClient: credentials not configured')
+    }
+
     return {
       ...headers,
       'Gateway-Auth-Token': this.token,

@@ -1,7 +1,9 @@
 import { test } from '@japa/runner'
 import Database from '@adonisjs/lucid/services/db'
 import Gateway from '#models/gateway'
-import GatewayService from '#services/gateway_service'
+import Transaction from '#models/transaction'
+import TransactionProduct from '#models/transaction_product'
+import GatewayService from '#services/gateways/gateway_service'
 import type { ChargeResult } from '#types/charge_result.type'
 import PaymentGatewayClient from '#interfaces/payment_gateway_client.interface'
 
@@ -42,6 +44,9 @@ test.group('GatewayService', (group) => {
   })
 
   test('Only lists active gateways per asc priority', async ({ assert }) => {
+    await TransactionProduct.query().delete()
+    await Transaction.query().delete()
+    await Gateway.query().delete()
     await Gateway.createMany([
       { name: 'A', isActive: true, priority: 2 },
       { name: 'B', isActive: true, priority: 1 },
@@ -58,6 +63,9 @@ test.group('GatewayService', (group) => {
   })
 
   test('Failover: try in order and stops at first success', async ({ assert }) => {
+    await TransactionProduct.query().delete()
+    await Transaction.query().delete()
+    await Gateway.query().delete()
     await Gateway.createMany([
       { name: 'GATEWAY_NO', isActive: true, priority: 1 },
       { name: 'GATEWAY_OK', isActive: true, priority: 2 },
@@ -81,6 +89,9 @@ test.group('GatewayService', (group) => {
   })
 
   test('When all fail, return error', async ({ assert }) => {
+    await TransactionProduct.query().delete()
+    await Transaction.query().delete()
+    await Gateway.query().delete()
     await Gateway.createMany([
       { name: 'GATEWAY_NO', isActive: true, priority: 1 },
       { name: 'GATEWAY_ERROR', isActive: true, priority: 2 },
@@ -104,6 +115,9 @@ test.group('GatewayService', (group) => {
   })
 
   test('Ignores gateway with unmapped client', async ({ assert }) => {
+    await TransactionProduct.query().delete()
+    await Transaction.query().delete()
+    await Gateway.query().delete()
     await Gateway.createMany([
       { name: 'A', isActive: true, priority: 1 },
       { name: 'GATEWAY_OK', isActive: true, priority: 2 },
@@ -126,6 +140,9 @@ test.group('GatewayService', (group) => {
   })
 
   test('No active gateways', async ({ assert }) => {
+    await TransactionProduct.query().delete()
+    await Transaction.query().delete()
+    await Gateway.query().delete()
     const gatewayService = new GatewayService({})
     const { result, gatewayName } = await gatewayService.chargeWithFailover({
       amount: 1000,
