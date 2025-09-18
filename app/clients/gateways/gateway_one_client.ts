@@ -44,18 +44,17 @@ export default class GatewayOneClient implements PaymentGatewayClient {
       }),
     })
 
-    const rawBody = await response.text()
+    const data = await response.text()
 
     if (!response.ok) {
-      console.error('GatewayOneClient charge error:', rawBody)
+      console.error('GatewayOneClient charge error:', data)
       return { ok: false, status: 'error' }
     }
 
     let payload: { id?: string }
     try {
-      payload = JSON.parse(rawBody) as { id?: string }
+      payload = JSON.parse(data) as { id?: string }
     } catch (error) {
-      console.error('GatewayOneClient invalid JSON response:', rawBody, error)
       return { ok: false, status: 'error' }
     }
 

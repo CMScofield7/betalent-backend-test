@@ -13,7 +13,7 @@ export default class GatewayTwoClient implements PaymentGatewayClient {
 
   private withAuth(headers: Record<string, string> = {}) {
     if (!this.token || !this.secret) {
-      throw new Error('GatewayTwoClient: credentials not configured')
+      throw new Error('GatewayTwoClient: credentials not configured...')
     }
 
     return {
