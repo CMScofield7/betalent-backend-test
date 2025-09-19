@@ -204,6 +204,20 @@ Authorization: Bearer <token>
 }
 ```
 
+#### Clientes
+
+```http
+GET /clients
+Authorization: Bearer <token>
+```
+##### Apenas `admin` e `manager` podem visualizar todos os clientes.
+
+```http
+GET /clients/:id
+Authorization: Bearer <token>
+```
+##### Apenas `admin` e `manager` podem visualizar detalhes de um cliente.
+
 #### Gateways
 
 ##### Por vias de segurança, apenas `admin` podem gerenciar os gateways.
@@ -331,6 +345,10 @@ Os clients (`GatewayOneClient` e `GatewayTwoClient`) já esperam os contratos de
 ## 🧠 Minhas considerações sobre o desafio
 
 O fato d'eu não conhecer o framework me fez ter de pesquisar bastante pra aplicar o que usualmente eu faria no NestJS, que é o framework que eu conheço um pouco mais. Ter de adaptar soluções de frameworks diferentes me fez fritar alguns neurônios, mas o desafio foi recompensador (ao menos essa é a minha sensação).
+
+> P.S: Eu notei um bug ao tentar passar os dados no input do Gateway 1. Caso os dados sejam incorretos, isso trigga o DTO dentro do mock, o que é o correto, no entanto mesmo tentando criar validações e mecanismos pra evitar esse comportamento e cair num caso de erro, ele ainda assim aprova a transação. Não sei se o problema vem em algum ponto da minha implementação ou se é realmente no mock, mas achei pertinente documentar.
+
+> P.S 2: Embora eu tenha realizado os 3 níveis do desafio, isso não significa que sou pleno ou senior, apenas que eu conheço o conceitos como RBAC, JWT, tipos de teste e etc. Tenho muito a aprender e a crescer como desenvolvedor.
 
 ---
 
