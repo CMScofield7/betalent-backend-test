@@ -31,6 +31,30 @@ API RESTful construída com AdonisJS para gerenciar um fluxo completo de vendas 
    cp .env.example .env
    ```
 
+   Edite o arquivo `.env` com as suas configurações (por ser um teste, as venvs estarão aqui abaixo):
+
+   ```env
+   TZ=UTC
+   PORT=3333
+   HOST=localhost
+   LOG_LEVEL=info
+   APP_KEY=Ss9TAY2hLOJVHW0KYYexrBH_AsoWakML
+   NODE_ENV=development
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_USER=root
+   DB_PASSWORD=root
+   DB_DATABASE=betalent-gateway-api
+   GATEWAY_ONE_EMAIL=dev@betalent.tech
+   GATEWAY_ONE_TOKEN=FEC9BB078BF338F464F96B48089EB498
+   GATEWAY_ONE_URL=http://localhost:3001
+   GATEWAY_TWO_URL=http://localhost:3002
+   GATEWAY_TWO_TOKEN=tk_f2198cc671b5289fa856
+   GATEWAY_TWO_SECRET=3d15e8ed6131446ea7e3456728b1211f
+   ```
+
+   > **Obs.:** O arquivo `.env` deve estar na raiz do projeto.
+
 3. Suba a infraestrutura via Docker (MySQL + mocks):
 
    ```bash
@@ -210,12 +234,14 @@ Authorization: Bearer <token>
 GET /clients
 Authorization: Bearer <token>
 ```
+
 ##### Apenas `admin` e `manager` podem visualizar todos os clientes.
 
 ```http
 GET /clients/:id
 Authorization: Bearer <token>
 ```
+
 ##### Apenas `admin` e `manager` podem visualizar detalhes de um cliente.
 
 #### Gateways
@@ -351,4 +377,3 @@ O fato d'eu não conhecer o framework me fez ter de pesquisar bastante pra aplic
 > P.S 2: Embora eu tenha realizado os 3 níveis do desafio, isso não significa que sou pleno ou senior, apenas que eu conheço o conceitos como RBAC, JWT, tipos de teste e etc. Tenho muito a aprender e a crescer como desenvolvedor.
 
 ---
-
