@@ -166,6 +166,12 @@ Authorization: Bearer <token>
 
 ```json
 {
+  "priority": 1
+}
+
+ou
+
+{
   "priority": 2
 }
 ```
@@ -176,6 +182,12 @@ Authorization: Bearer <token>
 ```
 
 ```json
+{
+  "isActive": true
+}
+
+ou
+
 {
   "isActive": false
 }

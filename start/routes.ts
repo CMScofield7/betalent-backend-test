@@ -34,14 +34,13 @@ router
 router
   .post('/transactions/:id/refund', '#controllers/transactions_controller.refund')
   .use([middleware.auth(), middleware.role([UserRole.ADMIN, UserRole.FINANCE])])
-
-router.get('/users/me', '#controllers/user_controllers.me').use([middleware.auth()])
 router
   .group(() => {
     router.get('/users', '#controllers/user_controllers.index')
-    router.get('/users/:email', '#controllers/user_controllers.indexOne')
     router.post('/users', '#controllers/user_controllers.store')
     router.patch('/users/:id', '#controllers/user_controllers.update')
     router.delete('/users/:id', '#controllers/user_controllers.destroy')
   })
   .use([middleware.auth(), middleware.role([UserRole.ADMIN, UserRole.MANAGER])])
+router.get('/users/me', '#controllers/user_controllers.me').use([middleware.auth()])
+router.get('/users/:id', '#controllers/user_controllers.indexOne').use([middleware.auth()])

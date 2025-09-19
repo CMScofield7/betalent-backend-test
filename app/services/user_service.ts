@@ -28,9 +28,10 @@ export default class UserService implements UserServiceInterface {
     return User.all()
   }
 
-  async findUserByEmail(currentUser: User, email: string): Promise<User | null> {
-    this.whoCanManageUsers(currentUser)
-    return User.findBy('email', email)
+  async findUserById(currentUser: User, userId: number): Promise<User | null> {
+    const user = await User.find(userId)
+    if (userId !== currentUser.id) this.whoCanManageUsers(currentUser)
+    return user
   }
 
   async updateUser(currentUser: User, userId: number, payload: UpdateUserInput): Promise<User> {

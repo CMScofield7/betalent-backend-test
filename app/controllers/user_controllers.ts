@@ -25,7 +25,7 @@ export default class UsersController {
 
   async indexOne({ auth, params }: HttpContext) {
     const currentUser = auth.user!
-    return this.userService.findUserByEmail(currentUser, params.email)
+    return this.userService.findUserById(currentUser, +params.id)
   }
 
   async update({ auth, params, request }: HttpContext) {

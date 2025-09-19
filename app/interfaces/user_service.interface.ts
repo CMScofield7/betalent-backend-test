@@ -17,7 +17,7 @@ export type UpdateUserInput = {
 export default interface UserServiceInterface {
   createUser(currentUser: User, payload: CreateUserInput): Promise<User>
   findAllUsers(currentUser: User): Promise<User[]>
-  findUserByEmail(currentUser: User, email: string): Promise<User | null>
+  findUserById(currentUser: User, userId: number): Promise<User | null>
   updateUser(currentUser: User, userId: number, payload: UpdateUserInput): Promise<User>
   deleteUser(currentUser: User, userId: number): Promise<void>
 }
