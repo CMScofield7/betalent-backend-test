@@ -251,6 +251,8 @@ tests/
 
 ## 🧰 Gateways mockados
 
+As imagens dos gateways mockados estão disponíveis na [Docker Hub](https://hub.docker.com/r/matheusprotzen/gateways-mock).
+
 ```bash
 docker run -p 3001:3001 -p 3002:3002 matheusprotzen/gateways-mock
 # ou com auth removida
