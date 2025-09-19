@@ -31,7 +31,7 @@ export default class GatewayService implements ChargeGatewayDriver {
           }
         }
         if (!response.ok || response.status !== 'approved') {
-          console.warn(`Gateway ${gateway.name} returned non-approval`, response)
+          console.warn(`${gateway.name} returned non-approval`, response)
         }
       } catch (error) {
         console.error(`Gateway ${gateway.name} call failed`, error)

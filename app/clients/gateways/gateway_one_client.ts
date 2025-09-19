@@ -32,21 +32,34 @@ export default class GatewayOneClient implements PaymentGatewayClient {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(input satisfies ChargeInput),
+      body: JSON.stringify(input),
     })
 
-    const data = await response.text()
+    const data = JSON.parse(await response.text())
+
     if (!response.ok) {
-      console.error('GatewayOneClient charge error:', data)
+      try {
+        if (Array.isArray(data) && data.every((item) => item.rule === 'required')) {
+          console.error('GatewayOneClient validation errors:', data)
+
+          return { ok: false, status: 'error' }
+        } else {
+          console.error('GatewayOneClient charge error:', data)
+
+          return { ok: false, status: 'error' }
+        }
+      } catch (error) {
+        console.error('GatewayOneClient charge error:', data)
+      }
+
       return { ok: false, status: 'error' }
     }
 
     try {
-      const parsed = JSON.parse(data) as GatewayOneChargeResponse
       return {
         ok: true,
         status: 'approved',
-        externalId: parsed.id,
+        externalId: data.id as GatewayOneChargeResponse['id'],
       }
     } catch {
       return { ok: false, status: 'error' }

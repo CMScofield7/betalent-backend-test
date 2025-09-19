@@ -55,26 +55,26 @@ API RESTful construída com AdonisJS para gerenciar um fluxo completo de vendas 
 
 O seed `user_seeder.ts` cria um admin para facilitar o primeiro login:
 
-| Email            | Senha     | Role  |
-| ---------------- | ---------- | ----- |
-| `x@y.com`        | `admin123` | admin |
+| Email     | Senha      | Role  |
+| --------- | ---------- | ----- |
+| `x@y.com` | `admin123` | admin |
 
 ## 📡 Rotas principais
 
-| Método/rota                       | Descrição                                                         | Autorização                              |
-| --------------------------------- | ----------------------------------------------------------------- | ---------------------------------------- |
-| `POST /login`                     | Autentica e retorna token                                         | Pública                                   |
-| `POST /checkout`                  | Processa compra multi-gateway com failover                        | Pública                                   |
-| `GET /gateways`                   | Lista gateways                                                    | `admin`                                   |
-| `PATCH /gateways/:id/priority`    | Ajusta prioridade de um gateway                                   | `admin`                                   |
-| `PATCH /gateways/:id/active`      | Ativa/desativa um gateway                                         | `admin`                                   |
-| `POST /products` / `GET /products`| CRUD básico de produtos                                           | `admin` e `finance`                       |
-| `GET /clients` / `GET /clients/:id`| Lista clientes e detalha compras de um cliente                    | Qualquer usuário autenticado              |
-| `GET /users/me`                   | Dados do usuário autenticado                                      | Qualquer usuário autenticado              |
-| `POST /users` / `PATCH /users/:id`/`DELETE /users/:id` | Gerenciamento de usuários com regras por nível              | `admin` e `manager` (delete apenas `admin`)|
-| `POST /transactions/:id/refund`   | Reembolso junto ao gateway e atualização do status da transação   | `admin` e `finance`                       |
+| Método/rota                                            | Descrição                                                       | Autorização                                 |
+| ------------------------------------------------------ | --------------------------------------------------------------- | ------------------------------------------- |
+| `POST /login`                                          | Autentica e retorna token                                       | Pública                                     |
+| `POST /checkout`                                       | Processa compra multi-gateway com failover                      | Pública                                     |
+| `GET /gateways`                                        | Lista gateways                                                  | `admin`                                     |
+| `PATCH /gateways/:id/priority`                         | Ajusta prioridade de um gateway                                 | `admin`                                     |
+| `PATCH /gateways/:id/active`                           | Ativa/desativa um gateway                                       | `admin`                                     |
+| `POST /products` / `GET /products`                     | CRUD básico de produtos                                         | `admin` e `finance`                         |
+| `GET /clients` / `GET /clients/:id`                    | Lista clientes e detalha compras de um cliente                  | Qualquer usuário autenticado                |
+| `GET /users/me`                                        | Dados do usuário autenticado                                    | Qualquer usuário autenticado                |
+| `POST /users` / `PATCH /users/:id`/`DELETE /users/:id` | Gerenciamento de usuários com regras por nível                  | `admin` e `manager` (delete apenas `admin`) |
+| `POST /transactions/:id/refund`                        | Reembolso junto ao gateway e atualização do status da transação | `admin` e `finance`                         |
 
-### Payloads de exemplo
+### Endpoints
 
 #### Autenticação
 
@@ -95,6 +95,10 @@ POST /login
 POST /checkout
 ```
 
+> `client.name` deve conter pelo menos **3 caracteres** (Gateway 2) e o primeiro nome deve ter **5 caracteres** (Gateway 1).
+
+##### Pode receber múltiplos produtos também.
+
 ```json
 {
   "client": {
@@ -105,6 +109,10 @@ POST /checkout
     {
       "productId": 1,
       "quantity": 2
+    },
+    {
+      "productId": 2,
+      "quantity": 1
     }
   ],
   "card": {
@@ -121,12 +129,32 @@ POST /users
 Authorization: Bearer <token>
 ```
 
+##### Apenas `admin` e `manager` podem visualizar todos os usuários.
+
 ```json
 {
-  "fullName": "Manager Jane",
+  "fullName": "User Zé",
+  "email": "user@example.com",
+  "password": "secret123",
+  "role": "user"
+},
+{
+  "fullName": "Manager Maria das Dores",
   "email": "manager@example.com",
   "password": "secret123",
   "role": "manager"
+},
+{
+  "fullName": "Finance João",
+  "email": "finance@example.com",
+  "password": "secret123",
+  "role": "finance"
+},
+{
+  "fullName": "Admin Edinalva",
+  "email": "admin@example.com",
+  "password": "secret123",
+  "role": "admin"
 }
 ```
 
@@ -135,13 +163,32 @@ PATCH /users/:id
 Authorization: Bearer <token>
 ```
 
+##### Apenas `admin` e `manager` podem editar outros usuários.
+
 ```json
 {
-  "fullName": "Manager Jane Doe",
+  "fullName": "User Zé",
   "password": "new-secret",
-  "role": "finance"
+  "role": "user"
 }
 ```
+
+#### Apenas `admin` pode editar `manager` ou `admin`.
+
+```json
+{
+  "fullName": "Manager Maria das Dores",
+  "password": "new-secret",
+  "role": "manager"
+}
+```
+
+```http
+DELETE /users/:id
+Authorization: Bearer <token>
+```
+
+##### Apenas `admin` pode deletar outros usuários.
 
 #### Produtos
 
@@ -158,6 +205,13 @@ Authorization: Bearer <token>
 ```
 
 #### Gateways
+
+###### Por vias de segurança, apenas `admin` podem gerenciar os gateways.
+
+```http
+GET /gateways
+Authorization: Bearer <token>
+```
 
 ```http
 PATCH /gateways/:id/priority
@@ -195,6 +249,8 @@ ou
 
 #### Reembolso
 
+##### Apenas `admin` e `finance` podem reembolsar transações.
+
 ```http
 POST /transactions/:id/refund
 Authorization: Bearer <token>
@@ -204,25 +260,24 @@ Body vazio `{}`.
 
 ## 🧪 Testes
 
-O projeto segue TDD com testes unitários, e2e e um fluxo completo de checkout → reembolso.
+O projeto segue um padrão de desenvolvimento com testes unitários, e2e e um fluxo completo de checkout → reembolso.
 
 - **Unitários:** `npm run test:unit`
 - **E2E:** `npm run test:e2e` (usa _stubs_ de gateways; não depende do mock externo)
 - **Todos:** `npm test`
 
-
 ## 📜 Scripts
 
-| Script                 | Descrição                                                                           |
-| ---------------------- | ----------------------------------------------------------------------------------- |
-| `npm run db:reset`     | Wipe/Start do banco, migrations e seeders (gateways + admin)                        |
-| `npm run dev`          | Inicia o servidor em modo desenvolvimento com HMR                                   |
-| `npm run test:unit`    | Executa apenas a suíte de testes unitários                                          |
-| `npm run test:e2e`     | Executa os testes end-to-end (login → checkout → reembolso)                         |
-| `npm run lint`         | Lint com ESLint                                                                     |
-| `npm run format`       | Ajusta formatação com Prettier                                                      |
-| `npm run typecheck`    | Verifica tipagem com TypeScript                                                     |
-| `npm run build`        | Compila o projeto com o Assembler                                                   |
+| Script              | Descrição                                                    |
+| ------------------- | ------------------------------------------------------------ |
+| `npm run db:reset`  | Wipe/Start do banco, migrations e seeders (gateways + admin) |
+| `npm run dev`       | Inicia o servidor em modo desenvolvimento com HMR            |
+| `npm run test:unit` | Executa apenas a suíte de testes unitários                   |
+| `npm run test:e2e`  | Executa os testes end-to-end (login → checkout → reembolso)  |
+| `npm run lint`      | Lint com ESLint                                              |
+| `npm run format`    | Ajusta formatação com Prettier                               |
+| `npm run typecheck` | Verifica tipagem com TypeScript                              |
+| `npm run build`     | Compila o projeto com o Assembler                            |
 
 ## 🧩 Regras Implementadas
 
