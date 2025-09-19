@@ -102,7 +102,7 @@ POST /checkout
 ```json
 {
   "client": {
-    "name": "Zé Cliente",
+    "name": "Zé da Feira",
     "email": "cliente@example.com"
   },
   "items": [
@@ -129,7 +129,7 @@ POST /users
 Authorization: Bearer <token>
 ```
 
-##### Apenas `admin` e `manager` podem visualizar todos os usuários.
+###### Apenas `admin` e `manager` podem visualizar todos os usuários.
 
 ```json
 {
@@ -173,7 +173,7 @@ Authorization: Bearer <token>
 }
 ```
 
-#### Apenas `admin` pode editar `manager` ou `admin`.
+##### Apenas `admin` pode editar `manager` ou `admin`.
 
 ```json
 {
@@ -206,7 +206,7 @@ Authorization: Bearer <token>
 
 #### Gateways
 
-###### Por vias de segurança, apenas `admin` podem gerenciar os gateways.
+##### Por vias de segurança, apenas `admin` podem gerenciar os gateways.
 
 ```http
 GET /gateways
