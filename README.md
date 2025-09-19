@@ -251,8 +251,6 @@ tests/
 
 ## 🧰 Gateways mockados
 
-Se quiser exercitar a integração real com os mocks, use a imagem disponibilizada pelo desafio:
-
 ```bash
 docker run -p 3001:3001 -p 3002:3002 matheusprotzen/gateways-mock
 # ou com auth removida
